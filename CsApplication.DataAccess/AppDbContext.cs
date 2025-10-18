@@ -8,14 +8,10 @@ namespace CsApplication.DataAccess
     {
         public DbSet<Customer> Customers { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            if(!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer(
-                   "Server=ORAY\\SQLEXPRESS;Database=OrayDb;Trusted_Connection=True;TrustServerCertificate=True;"
-                );
-            }
         }
+
+       
     }
 }

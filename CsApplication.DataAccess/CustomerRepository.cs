@@ -1,31 +1,27 @@
 ﻿using CsApplication.Domain;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
+
 
 namespace CsApplication.DataAccess
 {
-    public class CustomerRepository
+    public class CustomerRepository<T> : ICustomerRepository<T> where T : class
     {
-        public void Add(Customer customer)
-        {
-            using var context = new AppDbContext();
-            context.Customers.Add(customer);
-            try
-            {
-                context.SaveChanges();
-            }
-            catch (DbUpdateException ex)
-            {
-                Console.WriteLine(ex.InnerException?.Message);
-            }
+        protected readonly AppDbContext _context;
+        protected readonly DbSet<T> _dbSet;
 
+        public CustomerRepository(AppDbContext context)
+        {
+            _context = context;
+            _dbSet = _context.Set<T>();
         }
 
-        public List<Customer> GetAll()
-        {
-            using var context = new AppDbContext();
-            return context.Customers.ToList();
-        }
+        public T GetById(int id) => _dbSet.Find(id);
+        public IEnumerable<T> GetAll() => _dbSet.ToList();
+        public void Add(T entity) => _dbSet.Add(entity);
+        public void Update(T entity) => _dbSet.Update(entity);
+        public void Delete(T entity) => _dbSet.Remove(entity);
+
+        public void Save() => _context.SaveChanges();
+
     }
 }
