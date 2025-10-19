@@ -1,5 +1,6 @@
 ﻿
 
+using AutoMapper;
 using CsApplication.DataAccess;
 using CsApplication.Domain;
 
@@ -8,29 +9,39 @@ namespace CsApplication.Business
     public class CustomerService : ICustomerService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public CustomerService(IUnitOfWork unitOfWork)
+        public CustomerService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        public void AddCustomer(Customer customer)
+        public void AddCustomer(CustomerDto dto)
         {
-            _unitOfWork.Customers.Add(customer);
+            var entity = _mapper.Map<Customer>(dto);
+            _unitOfWork.Customers.Add(entity);
             _unitOfWork.Complete();
         }
 
-        public List<Customer> GetAllCustomers() => _unitOfWork.Customers.GetAll().ToList();
-
-        public Customer GetCustomerById(int id) => _unitOfWork.Customers.GetById(id);
-
-        public void UpdateCustomer(Customer customer)
+        public List<Customer> GetAllCustomers()
         {
-            var existing = _unitOfWork.Customers.GetById(customer.Id);
+            var entities = _unitOfWork.Customers.GetAll();
+            return _mapper.Map<List<Customer>>(entities);
+        }
+
+        public Customer GetCustomerById(int id)
+        {
+            var entity = _unitOfWork.Customers.GetById(id);
+            return _mapper.Map<CustomerDto>(entity);
+        }
+
+        public void UpdateCustomer(CustomerDto dto)
+        {
+            var existing = _unitOfWork.Customers.GetById(dto.Id);
             if (existing == null) throw new ArgumentException("Müşteri bulunamadı.");
 
-            existing.Name = customer.Name;
-            existing.Email = customer.Email;
+            _mapper.Map(dto, existing);
 
             _unitOfWork.Customers.Update(existing);
             _unitOfWork.Complete();

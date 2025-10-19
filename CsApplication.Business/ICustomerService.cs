@@ -4,10 +4,10 @@ namespace CsApplication.Business
 {
     public interface ICustomerService
     {
-        void AddCustomer(Customer customer);
-        void UpdateCustomer(Customer customer);
-        List<Customer> GetAllCustomers();
+        void AddCustomer(CustomerDto dto);
+        void UpdateCustomer(CustomerDto dto);
+        List<CustomerDto> GetAllCustomers();
         void DeleteCustomer(int id);
-        Customer GetCustomerById(int id);
+        CustomerDto GetCustomerById(int id);
     }
 }

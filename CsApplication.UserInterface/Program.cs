@@ -46,7 +46,7 @@ namespace CsApplication.UI
                     var email = Console.ReadLine();
                     Console.WriteLine();
 
-                    service.AddCustomer(new Customer { Name = name, Email = email });
+                    service.AddCustomer(new CustomerDto { Name = name, Email = email });
                     Console.WriteLine("Müşteri eklendi\n");
                    
                 }
