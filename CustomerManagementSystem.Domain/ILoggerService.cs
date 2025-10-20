@@ -1,6 +1,7 @@
 ﻿
 
-namespace CsApplication.Domain
+namespace CustomerManagementSystem.Domain
+
 {
     public interface ILoggerService
     {

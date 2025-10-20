@@ -1,8 +1,8 @@
 ﻿
-using CsApplication.Domain;
+using CustomerManagementSystem.Domain;
 using FluentValidation;
 
-namespace CsApplication.Business.Validations
+namespace CustomerManagementSystem.Business.Validations
 {
     public class CustomerValidator : AbstractValidator<CustomerDto>
     {

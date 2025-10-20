@@ -22,9 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CsApplication.Business\CsApplication.Business.csproj" />
-    <ProjectReference Include="..\CsApplication.DataAccess\CsApplication.DataAccess.csproj" />
-    <ProjectReference Include="..\CsApplication.Domain\CsApplication.Domain.csproj" />
+    <ProjectReference Include="..\CustomerManagementSystem.Business\CustomerManagementSystem.Business.csproj" />
+    <ProjectReference Include="..\CustomerManagementSystem.DataAccess\CustomerManagementSystem.DataAccess.csproj" />
+    <ProjectReference Include="..\CustomerManagementSystem.Domain\CustomerManagementSystem.Domain.csproj" />
   </ItemGroup>
 
 </Project>

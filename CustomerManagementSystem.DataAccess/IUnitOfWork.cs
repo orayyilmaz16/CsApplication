@@ -1,7 +1,6 @@
-﻿
-using CsApplication.Domain;
+﻿using CustomerManagementSystem.Domain;
 
-namespace CsApplication.DataAccess
+namespace CustomerManagementSystem.DataAccess
 {
     public interface IUnitOfWork : IAsyncDisposable
     {

@@ -16,7 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CsApplication.DataAccess\CsApplication.DataAccess.csproj" />
+    <ProjectReference Include="..\CustomerManagementSystem.DataAccess\CustomerManagementSystem.DataAccess.csproj" />
+    <ProjectReference Include="..\CustomerManagementSystem.Domain\CustomerManagementSystem.Domain.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,8 +1,8 @@
 ﻿
-using CsApplication.Domain;
+using CustomerManagementSystem.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace CsApplication.DataAccess
+namespace CustomerManagementSystem.DataAccess
 {
     public class AppDbContext : DbContext
     {

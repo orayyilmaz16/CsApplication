@@ -1,7 +1,8 @@
-﻿using CsApplication.Business;
-using CsApplication.Business.Validations;
-using CsApplication.DataAccess;
-using CsApplication.Domain;
+﻿
+using CustomerManagementSystem.Business;
+using CustomerManagementSystem.Business.Validations;
+using CustomerManagementSystem.DataAccess;
+using CustomerManagementSystem.Domain;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace CsApplication.UI
+namespace  CustomerManagementSystem.UserInterface
 {
     public class Program
     {

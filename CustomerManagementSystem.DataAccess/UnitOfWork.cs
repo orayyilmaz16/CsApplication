@@ -1,6 +1,6 @@
-﻿using CsApplication.Domain;
+﻿using CustomerManagementSystem.Domain;
 
-namespace CsApplication.DataAccess
+namespace CustomerManagementSystem.DataAccess
 {
     public class UnitOfWork : IUnitOfWork
     {

@@ -1,4 +1,4 @@
-﻿namespace CsApplication.Domain
+﻿namespace CustomerManagementSystem.Domain
 {
     public class CustomerDto
     {

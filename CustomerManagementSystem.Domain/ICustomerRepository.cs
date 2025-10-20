@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CsApplication.Domain
+namespace CustomerManagementSystem.Domain
 {
     public interface ICustomerRepository<T> where T : class
     {

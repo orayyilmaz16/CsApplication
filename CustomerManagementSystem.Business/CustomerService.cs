@@ -1,12 +1,12 @@
 ﻿
 using AutoMapper;
-using CsApplication.DataAccess;
-using CsApplication.Domain;
+using CustomerManagementSystem.DataAccess;
+using CustomerManagementSystem.Domain;
 using FluentValidation;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Logging;
 
-namespace CsApplication.Business
+namespace CustomerManagementSystem.Business
 {
     public class CustomerService : ICustomerService
     {

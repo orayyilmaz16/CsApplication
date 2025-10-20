@@ -1,7 +1,7 @@
-﻿using CsApplication.Domain;
-using System.Collections.Generic;
+﻿
+using CustomerManagementSystem.Domain;
 
-namespace CsApplication.Business
+namespace CustomerManagementSystem.Business
 {
     public interface ICustomerService
     {

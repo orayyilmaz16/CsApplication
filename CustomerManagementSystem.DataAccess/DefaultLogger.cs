@@ -1,7 +1,7 @@
-﻿using CsApplication.Domain;
+﻿using CustomerManagementSystem.Domain;
 using Microsoft.Extensions.Logging;
 
-namespace CsApplication.DataAccess
+namespace CustomerManagementSystem.DataAccess
 {
     public class DefaultLogger<T> : ILoggerService
     {

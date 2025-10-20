@@ -1,9 +1,9 @@
 ﻿
 using AutoMapper;
-using CsApplication.Domain;
+using CustomerManagementSystem.Domain;
 
-namespace CsApplication.Business
-{
+
+namespace CustomerManagementSystem.Business { 
     public class MappingProfile : Profile
     {
         public MappingProfile()
