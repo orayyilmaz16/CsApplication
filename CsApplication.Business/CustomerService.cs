@@ -52,13 +52,16 @@ namespace CsApplication.Business
             }
         }
 
-        public async Task<List<CustomerDto>> GetAllCustomersAsync()
+        public async Task<IEnumerable<CustomerDto>> GetAllCustomersAsync()
         {
             _logger.LogInformation("GetAllCustomersAsync çağrıldı.");
 
             var entities = await _unitOfWork.Customers.GetAllAsync();
-            return _mapper.Map<List<CustomerDto>>(entities);
+
+            // IEnumerable<CustomerDto> olarak map et
+            return _mapper.Map<IEnumerable<CustomerDto>>(entities);
         }
+
 
         public async Task<CustomerDto?> GetCustomerByIdAsync(int id)
         {
@@ -90,7 +93,7 @@ namespace CsApplication.Business
             try
             {
                 _mapper.Map(dto, existing);
-                _unitOfWork.Customers.Update(existing);
+                await _unitOfWork.Customers.UpdateAsync(existing);
                 await _unitOfWork.CompleteAsync();
 
                 _logger.LogInformation("Müşteri güncellendi. Id: {Id}", dto.Id);
@@ -117,7 +120,7 @@ namespace CsApplication.Business
             {
                 try
                 {
-                    _unitOfWork.Customers.Delete(existing);
+                   await _unitOfWork.Customers.DeleteAsync(existing);
                     await _unitOfWork.CompleteAsync();
 
                     _logger.LogInformation("Müşteri silindi. Id: {Id}", id);

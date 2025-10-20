@@ -3,6 +3,7 @@ using CsApplication.Business.Validations;
 using CsApplication.DataAccess;
 using CsApplication.Domain;
 using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,7 +13,7 @@ namespace CsApplication.UI
 {
     public class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var builder = Host.CreateDefaultBuilder(args)
                 .ConfigureServices((context, services) =>
@@ -31,6 +32,7 @@ namespace CsApplication.UI
                     });
 
                     // Business katmanı servisleri
+                    services.AddScoped<ICustomerRepository<Customer>, CustomerRepository>();
                     services.AddScoped<IUnitOfWork, UnitOfWork>();
                     services.AddScoped<ICustomerService, CustomerService>();
                     services.AddScoped<IValidator<CustomerDto>, CustomerValidator>();
@@ -45,6 +47,8 @@ namespace CsApplication.UI
             {
 
                 var service = scope.ServiceProvider.GetRequiredService<ICustomerService>();
+                var validator = scope.ServiceProvider.GetRequiredService<IValidator<CustomerDto>>();
+
 
                 // Basit Konsol Arayüzü - Döngü ile Menü
                 while (true)
@@ -72,15 +76,15 @@ namespace CsApplication.UI
                         var email = Console.ReadLine();
                         Console.WriteLine();
 
-                        service.AddCustomer(new CustomerDto { Name = name, Email = email });
-                        Console.WriteLine("Müşteri eklendi\n");
+                        await service.AddCustomerAsync(new CustomerDto { Name = name, Email = email });
+                        
 
                     }
 
                     // Tüm Müşteri İsimlerini Listeleme
                     else if (secim == "2")
                     {
-                        var customers = service.GetAllCustomers();
+                        var customers = await service.GetAllCustomersAsync();
                         Console.WriteLine("ID - Name - Email\n");
                         foreach (var customer in customers)
                         {
@@ -96,7 +100,7 @@ namespace CsApplication.UI
                         Console.Write("Güncellenecek müşteri ID: ");
                         if (int.TryParse(Console.ReadLine(), out int id))
                         {
-                            var existing = service.GetCustomerById(id);
+                            var existing = await service.GetCustomerByIdAsync(id);
                             if (existing == null)
                             {
                                 Console.WriteLine("Müşteri bulunamadı.");
@@ -111,8 +115,17 @@ namespace CsApplication.UI
                             existing.Name = string.IsNullOrWhiteSpace(name) ? existing.Name : name;
                             existing.Email = string.IsNullOrWhiteSpace(email) ? existing.Email : email;
 
-                            service.UpdateCustomer(existing);
-                            Console.WriteLine("Müşteri güncellendi.");
+                            ValidationResult result = await validator.ValidateAsync(existing);
+                            if (!result.IsValid)
+                            {
+                                foreach (var error in result.Errors)
+                                    Console.WriteLine($"Hata: {error.ErrorMessage}");
+                                continue;
+                            }
+
+
+                            await service.UpdateCustomerAsync(existing);
+                            
                         }
                     }
 
@@ -122,8 +135,17 @@ namespace CsApplication.UI
                         Console.Write("Silinecek müşteri ID: ");
                         if (int.TryParse(Console.ReadLine(), out int id))
                         {
-                            service.DeleteCustomer(id);
-                            Console.WriteLine("Müşteri silindi.");
+                            var dto = new CustomerDto { Id = id };
+                            ValidationResult result = await validator.ValidateAsync(dto);
+                            if (!result.IsValid)
+                            {
+                                foreach (var error in result.Errors)
+                                    Console.WriteLine($"Hata: {error.ErrorMessage}");
+                                continue;
+                            }
+
+                            await service.DeleteCustomerAsync(id);
+
                         }
                     }
 

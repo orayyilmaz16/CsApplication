@@ -15,7 +15,11 @@ namespace CsApplication.Business.Validations
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("Email boş olamaz")
                 .EmailAddress().WithMessage("Geçerli bir email adresi giriniz");
-                
+
+            RuleFor(x => x.Id)
+                .GreaterThan(0).WithMessage("Geçerli bir müşteri ID giriniz.");
+
+
         }
     }
 }

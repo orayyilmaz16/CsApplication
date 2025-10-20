@@ -5,13 +5,16 @@ namespace CsApplication.DataAccess
     public class UnitOfWork : IUnitOfWork
     {
         private readonly AppDbContext _context;
-        public ICustomerRepository<Customer> Customers { get; }
+        private readonly ICustomerRepository<Customer> _customers;
+       
 
-        public UnitOfWork(AppDbContext context, ICustomerRepository<Customer> customerRepository)
+        public UnitOfWork(AppDbContext context, ICustomerRepository<Customer> customers)
         {
             _context = context;
-            Customers = customerRepository;
+            _customers = customers;
         }
+
+        public ICustomerRepository<Customer> Customers => _customers;
 
         public async Task<int> CompleteAsync()
         {
