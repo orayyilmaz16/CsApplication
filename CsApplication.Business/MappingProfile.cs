@@ -9,6 +9,7 @@ namespace CsApplication.Business
         public MappingProfile()
         {
             CreateMap<Customer, CustomerDto>().ReverseMap();
+            CreateMap<CustomerDto,Customer>().ReverseMap(); 
         }
     }
 }
