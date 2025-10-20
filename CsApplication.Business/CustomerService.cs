@@ -3,6 +3,8 @@ using AutoMapper;
 using CsApplication.DataAccess;
 using CsApplication.Domain;
 using FluentValidation;
+using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Logging;
 
 namespace CsApplication.Business
 {
@@ -11,73 +13,127 @@ namespace CsApplication.Business
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IValidator<CustomerDto> _validator;
+        private readonly ILogger<CustomerService> _logger;
+       
 
-        public CustomerService(IUnitOfWork unitOfWork, IMapper mapper,IValidator<CustomerDto> validator)
+        public CustomerService(IUnitOfWork unitOfWork, IMapper mapper,IValidator<CustomerDto> validator,ILogger<CustomerService> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _validator = validator;
+            _logger = logger;
+       
         }
 
-        public void AddCustomer(CustomerDto dto)
+        public async Task AddCustomerAsync(CustomerDto dto)
         {
-            var result = _validator.Validate(dto);
+            _logger.LogInformation("AddCustomerAsync çağrıldı. DTO: {@Dto}", dto);
+
+            var result = await _validator.ValidateAsync(dto);
             if (!result.IsValid)
             {
                 foreach (var error in result.Errors)
-                    Console.WriteLine($"Hata: {error.ErrorMessage}");
+                    _logger.LogWarning("Validasyon hatası: {ErrorMessage}", error.ErrorMessage);
                 return;
-                
             }
 
-            var entity = _mapper.Map<Customer>(dto);
-            _unitOfWork.Customers.Add(entity);
-            _unitOfWork.Complete();
+            try
+            {
+                var entity = _mapper.Map<Customer>(dto);
+                await _unitOfWork.Customers.AddAsync(entity);
+                await _unitOfWork.CompleteAsync();
+
+                _logger.LogInformation("Müşteri başarıyla eklendi. Id: {CustomerId}", entity.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Müşteri eklenirken hata oluştu.");
+                throw;
+            }
         }
 
-        public List<CustomerDto> GetAllCustomers()
+        public async Task<List<CustomerDto>> GetAllCustomersAsync()
         {
-            var entities = _unitOfWork.Customers.GetAll();
+            _logger.LogInformation("GetAllCustomersAsync çağrıldı.");
+
+            var entities = await _unitOfWork.Customers.GetAllAsync();
             return _mapper.Map<List<CustomerDto>>(entities);
         }
 
-        public CustomerDto GetCustomerById(int id)
+        public async Task<CustomerDto?> GetCustomerByIdAsync(int id)
         {
-            var entity = _unitOfWork.Customers.GetById(id);
-            return _mapper.Map<CustomerDto>(entity);
+            _logger.LogInformation("GetCustomerByIdAsync çağrıldı. Id: {Id}", id);
+
+            var entity = await _unitOfWork.Customers.GetByIdAsync(id);
+            return _mapper.Map<CustomerDto?>(entity);
         }
 
-        public void UpdateCustomer(CustomerDto dto)
+        public async Task UpdateCustomerAsync(CustomerDto dto)
         {
-            var validationResult = _validator.Validate(dto);
+            _logger.LogInformation("UpdateCustomerAsync çağrıldı. DTO: {@Dto}", dto);
+
+            var validationResult = await _validator.ValidateAsync(dto);
             if (!validationResult.IsValid)
             {
                 foreach (var error in validationResult.Errors)
-                    Console.WriteLine($"Hata: {error.ErrorMessage}");
+                    _logger.LogWarning("Validasyon hatası: {ErrorMessage}", error.ErrorMessage);
                 return;
             }
 
-
-            var existing = _unitOfWork.Customers.GetById(dto.Id);
-            if (existing == null) throw new ArgumentException("Müşteri bulunamadı.");
-
-            _mapper.Map(dto, existing);
-            _unitOfWork.Customers.Update(existing);
-            _unitOfWork.Complete();
-        }
-
-        public void DeleteCustomer(int id)
-        {
-            if (id <= 0)
-                throw new ArgumentException("Geçersiz müşteri ID");
-
-            var existing = _unitOfWork.Customers.GetById(id);
-            if (existing != null)
+            var existing = await _unitOfWork.Customers.GetByIdAsync(dto.Id);
+            if (existing == null)
             {
-                _unitOfWork.Customers.Delete(existing);
-                _unitOfWork.Complete();
+                _logger.LogWarning("Müşteri bulunamadı. Id: {Id}", dto.Id);
+                throw new ArgumentException("Müşteri bulunamadı.");
+            }
+
+            try
+            {
+                _mapper.Map(dto, existing);
+                _unitOfWork.Customers.Update(existing);
+                await _unitOfWork.CompleteAsync();
+
+                _logger.LogInformation("Müşteri güncellendi. Id: {Id}", dto.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Müşteri güncellenirken hata oluştu. Id: {Id}", dto.Id);
+                throw;
             }
         }
+
+        public async Task DeleteCustomerAsync(int id)
+        {
+            _logger.LogInformation("DeleteCustomerAsync çağrıldı. Id: {Id}", id);
+
+            if (id <= 0)
+            {
+                _logger.LogWarning("Geçersiz müşteri ID: {Id}", id);
+                throw new ArgumentException("Geçersiz müşteri ID");
+            }
+
+            var existing = await _unitOfWork.Customers.GetByIdAsync(id);
+            if (existing != null)
+            {
+                try
+                {
+                    _unitOfWork.Customers.Delete(existing);
+                    await _unitOfWork.CompleteAsync();
+
+                    _logger.LogInformation("Müşteri silindi. Id: {Id}", id);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Müşteri silinirken hata oluştu. Id: {Id}", id);
+                    throw;
+                }
+            }
+            else
+            {
+                _logger.LogWarning("Silinmek istenen müşteri bulunamadı. Id: {Id}", id);
+            }
+        }
+
     }
 
 }

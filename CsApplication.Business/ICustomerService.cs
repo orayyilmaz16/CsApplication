@@ -5,10 +5,11 @@ namespace CsApplication.Business
 {
     public interface ICustomerService
     {
-        void AddCustomer(CustomerDto dto);
-        void UpdateCustomer(CustomerDto dto);
-        List<CustomerDto> GetAllCustomers();
-        void DeleteCustomer(int id);
-        CustomerDto GetCustomerById(int id);
+        Task AddCustomerAsync(CustomerDto dto);
+        Task<List<CustomerDto>> GetAllCustomersAsync();
+        Task<CustomerDto?> GetCustomerByIdAsync(int id);
+        Task UpdateCustomerAsync(CustomerDto dto);
+        Task DeleteCustomerAsync(int id);
+
     }
 }

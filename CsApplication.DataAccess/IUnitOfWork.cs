@@ -3,10 +3,10 @@ using CsApplication.Domain;
 
 namespace CsApplication.DataAccess
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork : IAsyncDisposable
     {
         ICustomerRepository<Customer> Customers { get; }
-        int Complete();
+        Task<int> CompleteAsync();
     }
 
 }

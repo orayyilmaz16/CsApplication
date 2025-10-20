@@ -4,11 +4,13 @@ namespace CsApplication.Domain
 {
     public interface ICustomerRepository<T> where T : class
     {
-        T GetById(int id);
-        IEnumerable<T> GetAll();
-        void Add(T entity);
+        Task<T?> GetByIdAsync(int id);
+        Task<List<T>> GetAllAsync();
+        Task AddAsync(T entity);
         void Update(T entity);
         void Delete(T entity);
+        Task SaveAsync();
+
 
     }
 }

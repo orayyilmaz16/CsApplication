@@ -6,6 +6,7 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace CsApplication.UI
 {
@@ -22,11 +23,19 @@ namespace CsApplication.UI
 
                     // AutoMapper
                     services.AddAutoMapper(typeof(MappingProfile));
+                    services.AddLogging(logging =>
+                    {
+                        logging.ClearProviders();
+                        logging.AddConsole();
+                        logging.AddDebug();
+                    });
 
                     // Business katmanı servisleri
                     services.AddScoped<IUnitOfWork, UnitOfWork>();
                     services.AddScoped<ICustomerService, CustomerService>();
                     services.AddScoped<IValidator<CustomerDto>, CustomerValidator>();
+                   
+                   
                 });
 
             var host = builder.Build();
@@ -37,6 +46,7 @@ namespace CsApplication.UI
 
                 var service = scope.ServiceProvider.GetRequiredService<ICustomerService>();
 
+                // Basit Konsol Arayüzü - Döngü ile Menü
                 while (true)
                 {
                     Console.WriteLine("Müşteri Yönetim Sistemine Hoş geldiniz...\n\n");
@@ -52,6 +62,7 @@ namespace CsApplication.UI
                     var secim = Console.ReadLine();
                     Console.WriteLine("");
 
+                    // Müşteri Ekleme
                     if (secim == "1")
                     {
                         Console.Write("Ad: ");
@@ -65,6 +76,8 @@ namespace CsApplication.UI
                         Console.WriteLine("Müşteri eklendi\n");
 
                     }
+
+                    // Tüm Müşteri İsimlerini Listeleme
                     else if (secim == "2")
                     {
                         var customers = service.GetAllCustomers();
@@ -76,6 +89,8 @@ namespace CsApplication.UI
                         Console.WriteLine("\n");
                     }
 
+
+                    // Müşteri Güncelleme
                     else if (secim == "3")
                     {
                         Console.Write("Güncellenecek müşteri ID: ");
@@ -100,6 +115,8 @@ namespace CsApplication.UI
                             Console.WriteLine("Müşteri güncellendi.");
                         }
                     }
+
+                    // Müşteri Silme
                     else if (secim == "4")
                     {
                         Console.Write("Silinecek müşteri ID: ");
@@ -110,11 +127,13 @@ namespace CsApplication.UI
                         }
                     }
 
-
+                    // Çıkış
                     else if (secim == "5")
                     {
                         break;
                     }
+
+                    // Hatalı Seçim
                     else
                     {
                         Console.WriteLine("Geçersiz seçim\n");
